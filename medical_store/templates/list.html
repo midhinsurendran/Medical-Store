@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
+    </head>
+<body>
+    {% extends 'navbar.html' %}
+
+{% block content %}
+<script>
+    $( function() {
+     
+      $( "#medicine" ).autocomplete({
+        source: `{% url 'searchs' %}`
+      });
+    } );
+    </script>
+<form method="POST">
+    {% csrf_token %}
+<input type="search" name="medicine" id="medicine">
+<button type="search">search</button>
+</form>
+
+<h1>Listing Products</h1>
+<div class="center">
+    <table border="1">
+        <tr>
+            <th>Medicine_name</th>
+            <th>Available_stock</th>
+            <th>Time</th>
+            <th>Update</th>
+            <th>Delete</th>
+        </tr>
+        {% for product in page_obj %}
+        <tr>
+            
+            <td>{{ product.medicine|upper }}</td>
+            <td>{{ product.stock}}</td>
+            <td>{{product.time}}</td>
+            <td ><a href="{%url 'updateproduct' product.id %}" class="btn btn-success" value="edit" type="submit">Edit</a></td>
+            <td><a href="{%url 'deleteproduct' product.id %}" class="btn btn-success" value="edit" type="submit">Delete</a></td>
+        </tr>
+        {% endfor %}
+        </tr>
+    </table>
+</div>
+
+<nav aria-label="Page navigation example" style="margin:auto;">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            
+                <a href="?page=1" class="page-link">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-link" aria-label="previous">&laquo; previous</a>
+        {% endif %}
+
+        {% for page_number in page_obj.paginator.get_elided_page_range %}
+            {% if page_obj.number == page_number %}
+                    <span class="page-link">{{ page_number }}</span>
+            {% else %}
+                    <a href="?page={{ page_number }}" class="page-link">{{ page_number }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="page-link">next &raquo;</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">last &raquo;</a>
+        {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% extends "navbar.html" %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <p>You are currently logged in as {{ user.username }}.</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit">Log Out</button>
+    </form>
+  {% else %}
+    <p>You are not currently logged in.</p>
+  {% endif %}
+{% endblock %}
+</body>
+</html>
