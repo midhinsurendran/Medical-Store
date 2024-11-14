@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Product Listing - Medical Store</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -11,72 +11,127 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.0/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://code.jquery.com/ui/1.14.0/jquery-ui.js"></script>
-    </head>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .search-container input[type="search"] {
+            width: 300px;
+            margin-right: 10px;
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-success {
+            margin: 0 5px;
+        }
+        .pagination {
+            justify-content: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
 <body>
     {% extends 'navbar.html' %}
 
-{% block content %}
-<script>
-    $( function() {
-     
-      $( "#medicine" ).autocomplete({
-        source: `{% url 'searchs' %}`
-      });
-    } );
+    {% block content %}
+    <script>
+        $(function() {
+            $("#medicine").autocomplete({
+                source: `{% url 'searchs' %}`
+            });
+        });
     </script>
-<form method="POST">
-    {% csrf_token %}
-<input type="search" name="medicine" id="medicine">
-<button type="search">search</button>
-</form>
 
-<h1>Listing Products</h1>
-<div class="center">
-    <table border="1">
-        <tr>
-            <th>Medicine_name</th>
-            <th>Available_stock</th>
-            <th>Time</th>
-            <th>Update</th>
-            <th>Delete</th>
-        </tr>
-        {% for product in page_obj %}
-        <tr>
-            
-            <td>{{ product.medicine|upper }}</td>
-            <td>{{ product.stock}}</td>
-            <td>{{product.time}}</td>
-            <td ><a href="{%url 'updateproduct' product.id %}" class="btn btn-success" value="edit" type="submit">Edit</a></td>
-            <td><a href="{%url 'deleteproduct' product.id %}" class="btn btn-success" value="edit" type="submit">Delete</a></td>
-        </tr>
-        {% endfor %}
-        </tr>
-    </table>
-</div>
+    <div class="search-container">
+        <form method="POST" class="form-inline">
+            {% csrf_token %}
+            <input type="search" name="medicine" id="medicine" class="form-control" placeholder="Search medicine..." required>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
 
-<nav aria-label="Page navigation example" style="margin:auto;">
-    <ul class="pagination">
-        {% if page_obj.has_previous %}
-            
-                <a href="?page=1" class="page-link">&laquo; first</a>
-                <a href="?page={{ page_obj.previous_page_number }}" class="page-link" aria-label="previous">&laquo; previous</a>
-        {% endif %}
+    <h1>Listing Products</h1>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Medicine Name</th>
+                    <th>Available Stock</th>
+                    <th>Time</th>
+                    <th colspan="2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in page_obj %}
+                <tr>
+                    <td>{{ product.medicine|upper }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td>{{ product.time }}</td>
+                    <td>
+                        <a href="{% url 'updateproduct' product.id %}" class="btn btn-success">Edit</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'deleteproduct' product.id %}" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-        {% for page_number in page_obj.paginator.get_elided_page_range %}
-            {% if page_obj.number == page_number %}
-                    <span class="page-link">{{ page_number }}</span>
-            {% else %}
-                    <a href="?page={{ page_number }}" class="page-link">{{ page_number }}</a>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a href="?page=1" class="page-link">&laquo; First</a>
+                </li>
+                <li class="page-item">
+                    <a href="?page={{ page_obj.previous_page_number }}" class="page-link" aria-label="Previous">&laquo; Previous</a>
+                </li>
             {% endif %}
-        {% endfor %}
 
-        {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" class="page-link">next &raquo;</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">last &raquo;</a>
-        {% endif %}
-    </ul>
-</nav>
+            {% for page_number in page_obj.paginator.get_elided_page_range %}
+                {% if page_obj.number == page_number %}
+                    <li class="page-item active"><span class="page-link">{{ page_number }}</span></li>
+                {% else %}
+                    <li class="page-item"><a href="?page={{ page_number }}" class="page-link">{{ page_number }}</a></li>
+                {% endif %}
+            {% endfor %}
 
-{% endblock %}
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next &raquo;</a>
+                </li>
+                <li class="page-item">
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">Last &raquo;</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    {% endblock %}
 </body>
 </html>

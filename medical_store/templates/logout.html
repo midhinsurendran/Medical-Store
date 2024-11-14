@@ -3,21 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Logout</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 </head>
 <body>
     {% extends "navbar.html" %}
 
-{% block content %}
-  {% if user.is_authenticated %}
-    <p>You are currently logged in as {{ user.username }}.</p>
-    <form method="post">
-      {% csrf_token %}
-      <button type="submit">Log Out</button>
-    </form>
-  {% else %}
-    <p>You are not currently logged in.</p>
-  {% endif %}
-{% endblock %}
+    {% block content %}
+    <div class="container mt-5">
+        <div class="text-center">
+            {% if user.is_authenticated %}
+                <div class="alert alert-info" role="alert">
+                    <p>You are currently logged in as <strong>{{ user.username }}</strong>.</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Log Out</button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="alert alert-warning" role="alert">
+                    <p>You are not currently logged in.</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    {% endblock %}
 </body>
 </html>

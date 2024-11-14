@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.db.models import Count
 from django.http import JsonResponse
-# Create your views here.
+
 
 from .forms import ProductForm
 
